@@ -1,9 +1,9 @@
-import type { RequestEvent } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import * as table from '$lib/server/db/schema';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
+import type { RequestEvent } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
+import type { DrizzleD1Database } from 'drizzle-orm/d1';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -22,11 +22,10 @@ export async function createSession(token: string, userId: string) {
     userId,
     expiresAt: new Date(Date.now() + DAY_IN_MS * 30)
   };
-  await db.insert(table.session).values(session);
   return session;
 }
 
-export async function validateSessionToken(token: string) {
+export async function validateSessionToken(token: string, db: DrizzleD1Database) {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const [result] = await db
     .select({
@@ -63,7 +62,7 @@ export async function validateSessionToken(token: string) {
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;
 
-export async function invalidateSession(sessionId: string) {
+export async function invalidateSession(sessionId: string, db: DrizzleD1Database) {
   await db.delete(table.session).where(eq(table.session.id, sessionId));
 }
 

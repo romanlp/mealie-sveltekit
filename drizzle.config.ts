@@ -1,5 +1,5 @@
 import { defineConfig } from 'drizzle-kit';
-if (!process.env.DB) throw new Error('DATABASE_URL is not set');
+if (!process.env.DB) throw new Error('DB is not set');
 
 export default defineConfig({
   schema: './src/lib/server/db/schema.ts',

@@ -1,7 +1,6 @@
 import * as auth from '$lib/server/auth';
 import { getDB } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { hash, verify } from '@node-rs/argon2';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -37,12 +36,7 @@ export const actions: Actions = {
       return fail(400, { message: 'Incorrect username or password' });
     }
 
-    const validPassword = await verify(existingUser.passwordHash, password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1
-    });
+    const validPassword = await auth.verify(existingUser.passwordHash, password);
     if (!validPassword) {
       return fail(400, { message: 'Incorrect username or password' });
     }
@@ -67,13 +61,7 @@ export const actions: Actions = {
     }
 
     const userId = generateUserId();
-    const passwordHash = await hash(password, {
-      // recommended minimum parameters
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1
-    });
+    const passwordHash = await auth.hash(password);
 
     try {
       const db = getDB(event.platform?.env.DB);

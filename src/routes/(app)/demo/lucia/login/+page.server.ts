@@ -36,7 +36,7 @@ export const actions: Actions = {
       return fail(400, { message: 'Incorrect username or password' });
     }
 
-    const validPassword = await auth.verify(existingUser.passwordHash, password);
+    const validPassword = await auth.verify(password, existingUser.passwordHash);
     if (!validPassword) {
       return fail(400, { message: 'Incorrect username or password' });
     }

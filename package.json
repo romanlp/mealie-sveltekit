@@ -58,6 +58,7 @@
     "zod": "^3.24.1"
   },
   "dependencies": {
+    "@auth/sveltekit": "^1.7.4",
     "@libsql/client": "^0.14.0",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",

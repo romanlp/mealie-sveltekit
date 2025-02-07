@@ -2,10 +2,8 @@ import * as table from '$lib/server/db/schema';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import type { RequestEvent } from '@sveltejs/kit';
-import { randomBytes, scrypt, timingSafeEqual } from 'crypto';
 import { eq } from 'drizzle-orm';
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
-import { promisify } from 'util';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -81,17 +79,17 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
   });
 }
 
-const scryptPromise = promisify(scrypt);
-
 export async function hash(password: string) {
-  const salt = randomBytes(16).toString('hex');
-  const derivedKey = await scryptPromise(password, salt, 64);
-  return salt + ':' + (derivedKey as Buffer).toString('hex');
+  return password;
+  // const salt = randomBytes(16).toString('hex');
+  // const derivedKey = await scryptPromise(password, salt, 64);
+  // return salt + ':' + (derivedKey as Buffer).toString('hex');
 }
 
 export async function verify(password: string, hash: string) {
-  const [salt, key] = hash.split(':');
-  const keyBuffer = Buffer.from(key, 'hex');
-  const derivedKey = await scryptPromise(password, salt, 64);
-  return timingSafeEqual(keyBuffer, derivedKey as Buffer);
+  return password === hash;
+  // const [salt, key] = hash.split(':');
+  // const keyBuffer = Buffer.from(key, 'hex');
+  // const derivedKey = await scryptPromise(password, salt, 64);
+  // return timingSafeEqual(keyBuffer, derivedKey as Buffer);
 }

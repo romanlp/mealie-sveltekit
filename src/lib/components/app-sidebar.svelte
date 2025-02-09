@@ -1,4 +1,5 @@
-<script lang="ts" module>
+<script lang="ts">
+  import { page } from '$app/stores';
   import BookOpen from 'lucide-svelte/icons/book-open';
   import Bot from 'lucide-svelte/icons/bot';
   import ChartPie from 'lucide-svelte/icons/chart-pie';
@@ -8,13 +9,17 @@
   import Send from 'lucide-svelte/icons/send';
   import Settings2 from 'lucide-svelte/icons/settings-2';
   import SquareTerminal from 'lucide-svelte/icons/square-terminal';
+  import NavMain from '$lib/components/nav-main.svelte';
+  import NavProjects from '$lib/components/nav-projects.svelte';
+  import NavSecondary from '$lib/components/nav-secondary.svelte';
+  import NavUser from '$lib/components/nav-user.svelte';
+  import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+  import Command from 'lucide-svelte/icons/command';
+
+  let { ref = $bindable(null), user, ...restProps } = $props();
 
   const data = {
-    user: {
-      name: 'shadcn',
-      email: 'm@example.com',
-      avatar: '/avatars/shadcn.jpg'
-    },
+    user: user,
     navMain: [
       {
         title: 'Playground',
@@ -134,19 +139,7 @@
   };
 </script>
 
-<script lang="ts">
-  import NavMain from '$lib/components/nav-main.svelte';
-  import NavProjects from '$lib/components/nav-projects.svelte';
-  import NavSecondary from '$lib/components/nav-secondary.svelte';
-  import NavUser from '$lib/components/nav-user.svelte';
-  import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import Command from 'lucide-svelte/icons/command';
-  import type { ComponentProps } from 'svelte';
-
-  let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
-</script>
-
-<Sidebar.Root bind:ref variant="inset" {...restProps}>
+<Sidebar.Root bind:ref variant="inset">
   <Sidebar.Header>
     <Sidebar.Menu>
       <Sidebar.MenuItem>
@@ -154,7 +147,7 @@
           {#snippet child({ props })}
             <a href="##" {...props}>
               <div
-                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+                class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
               >
                 <Command class="size-4" />
               </div>
@@ -174,6 +167,6 @@
     <NavSecondary items={data.navSecondary} class="mt-auto" />
   </Sidebar.Content>
   <Sidebar.Footer>
-    <NavUser user={data.user} />
+    <NavUser {user} />
   </Sidebar.Footer>
 </Sidebar.Root>

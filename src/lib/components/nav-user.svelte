@@ -10,6 +10,7 @@
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+  import { goto } from '$app/navigation';
 
   let {
     user
@@ -87,7 +88,7 @@
           </DropdownMenu.Item>
         </DropdownMenu.Group>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item>
+        <DropdownMenu.Item onclick={() => goto('/logout')}>
           <LogOut />
           Log out
         </DropdownMenu.Item>

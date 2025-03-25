@@ -48,10 +48,7 @@ export const actions: Actions = {
     }
 
     // Check if email already exists (assuming you have an email field in your user table)
-    const existingEmail = await db
-      .select()
-      .from(table.user)
-      .where(eq(table.user.email, email));
+    const existingEmail = await db.select().from(table.user).where(eq(table.user.email, email));
     if (existingEmail.length > 0) {
       return fail(400, { message: 'Email already registered' });
     }
@@ -60,11 +57,11 @@ export const actions: Actions = {
     const passwordHash = await auth.hash(password);
 
     try {
-      await db.insert(table.user).values({ 
-        id: userId, 
-        username, 
+      await db.insert(table.user).values({
+        id: userId,
+        username,
         email,
-        passwordHash 
+        passwordHash
       });
 
       const sessionToken = auth.generateSessionToken();
@@ -100,9 +97,5 @@ function validatePassword(password: unknown): password is string {
 }
 
 function validateEmail(email: unknown): email is string {
-  return (
-    typeof email === 'string' &&
-    email.length <= 255 &&
-    /^[^@]+@[^@]+\.[^@]+$/.test(email)
-  );
+  return typeof email === 'string' && email.length <= 255 && /^[^@]+@[^@]+\.[^@]+$/.test(email);
 }

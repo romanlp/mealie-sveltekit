@@ -16,8 +16,6 @@ export const actions: Actions = {
     const password = formData.get('password') as string;
 
     const result = await makeClient(fetch).api.login.$post({ form: { email, password } });
-    console.log('result', result);
-
     if (result.status === 404) {
       const data = await result.json();
       return fail(400, { message: data.message });

@@ -4,10 +4,11 @@ import { getDB } from '@server/db';
 import * as table from '@server/db/schema/schema';
 import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
-import { setCookie } from 'hono/cookie';
+import { deleteCookie, setCookie } from 'hono/cookie';
 import { z } from 'zod';
 
 const Login = z.object({ email: z.string(), password: z.string() });
+const Logout = z.object({ sessionId: z.string() });
 
 function validateEmail(email: unknown): email is string {
   return typeof email === 'string' && email.length <= 255 && /^[^@]+@[^@]+\.[^@]+$/.test(email);
@@ -22,7 +23,6 @@ const app = new Hono<{ Bindings: { DB: D1Database } }>()
     return c.text('Register');
   })
   .post('/login', zValidator('form', Login), async (c) => {
-    console.log('login');
     const body = await c.req.parseBody();
     const email = body['email'];
     const password = body['password'];
@@ -52,6 +52,13 @@ const app = new Hono<{ Bindings: { DB: D1Database } }>()
 
     setCookie(c, auth.sessionCookieName, sessionToken, { expires: session.expiresAt });
 
+    return c.json({ status: 'success' }, 200);
+  })
+  .post('/logout', zValidator('form', Logout), async (c) => {
+    const db = getDB(c.env.DB);
+    const body = await c.req.valid('form');
+    await auth.invalidateSession(body.sessionId, db);
+    deleteCookie(c, auth.sessionCookieName, { path: '/' });
     return c.json({ status: 'success' }, 200);
   });
 

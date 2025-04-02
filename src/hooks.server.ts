@@ -1,5 +1,5 @@
 import * as auth from '$lib/server/auth.js';
-import { getDB } from '$lib/server/db';
+import { getDB } from '@server/db';
 import type { Handle } from '@sveltejs/kit';
 
 const handleAuth: Handle = async ({ event, resolve }) => {

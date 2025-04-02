@@ -1,5 +1,5 @@
 import * as auth from '$lib/server/auth';
-import { getDB } from '$lib/server/db';
+import { getDB } from '@server/db';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

@@ -1,6 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
+import auth from './api/auth';
 
 export const Task = z.object({ id: z.string().uuid(), name: z.string().min(1), done: z.boolean() });
 
@@ -55,6 +56,7 @@ export const router = new Hono()
 const app = new Hono();
 
 app.route('/api', router);
+app.route('/api', auth);
 
 app.notFound((c) => {
   return c.text('Custom 404 Message', 404);

@@ -1,7 +1,7 @@
 import * as auth from '$lib/server/auth';
-import { getDB } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
+import { getDB } from '@server/db';
+import * as table from '@server/db/schema/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -57,12 +57,7 @@ export const actions: Actions = {
     const passwordHash = await auth.hash(password);
 
     try {
-      await db.insert(table.user).values({
-        id: userId,
-        username,
-        email,
-        passwordHash
-      });
+      await db.insert(table.user).values({ id: userId, username, email, passwordHash });
 
       const sessionToken = auth.generateSessionToken();
       const session = await auth.createSession(sessionToken, userId);

@@ -1,6 +1,6 @@
-import * as table from '$lib/server/db/schema';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
+import * as table from '@server/db/schema/schema';
 import type { RequestEvent } from '@sveltejs/kit';
 import { randomBytes, scrypt, timingSafeEqual } from 'crypto';
 import { eq } from 'drizzle-orm';
@@ -69,16 +69,11 @@ export async function invalidateSession(sessionId: string, db: DrizzleD1Database
 }
 
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
-  event.cookies.set(sessionCookieName, token, {
-    expires: expiresAt,
-    path: '/'
-  });
+  event.cookies.set(sessionCookieName, token, { expires: expiresAt, path: '/' });
 }
 
 export function deleteSessionTokenCookie(event: RequestEvent) {
-  event.cookies.delete(sessionCookieName, {
-    path: '/'
-  });
+  event.cookies.delete(sessionCookieName, { path: '/' });
 }
 
 const scryptPromise = promisify(scrypt);

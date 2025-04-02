@@ -17,7 +17,7 @@
       "binding": "DB",
       "database_name": "mealkit-db-prod",
       "database_id": "5cb7b1d9-102f-4fdc-a63a-019ccf3387e6",
-      "migrations_dir": "./src/lib/server/db/migrations"
+      "migrations_dir": "./src/server/db/migrations"
     }
   ],
   "vars": {

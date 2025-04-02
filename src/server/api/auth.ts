@@ -1,8 +1,8 @@
-import * as auth from '$lib/server/auth';
 import { zValidator } from '@hono/zod-validator';
+import * as auth from '@server/auth/lucia-helpers';
 import { getDB } from '@server/db';
+import { getUserByEmail } from '@server/db/queries/user.queries';
 import * as table from '@server/db/schema/schema';
-import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { deleteCookie, setCookie } from 'hono/cookie';
 import { z } from 'zod';
@@ -34,9 +34,8 @@ const app = new Hono<{ Bindings: { DB: D1Database } }>()
       return c.json({ message: 'Invalid password (min 6, max 255 characters)' }, 404);
     }
     const db = getDB(c.env.DB);
-    const results = await db.select().from(table.user).where(eq(table.user.email, email));
 
-    const existingUser = results.at(0);
+    const existingUser = await getUserByEmail(db, email);
     if (!existingUser) {
       return c.json({ message: 'Incorrect email or password' }, 404);
     }

@@ -1,5 +1,5 @@
-import * as auth from '$lib/server/auth';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
+import * as auth from '@server/auth/lucia-helpers';
 import { getDB } from '@server/db';
 import * as table from '@server/db/schema/schema';
 import { fail, redirect } from '@sveltejs/kit';

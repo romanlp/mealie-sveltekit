@@ -1,4 +1,4 @@
-import * as auth from '$lib/server/auth.js';
+import * as auth from '@server/auth/lucia-helpers.js';
 import { getDB } from '@server/db';
 import type { Handle } from '@sveltejs/kit';
 

@@ -53,15 +53,8 @@ export const router = new Hono()
     return c.json({ message: 'Task deleted' });
   });
 
-const app = new Hono();
-
-app.route('/api', router);
-app.route('/api', auth);
-
-app.notFound((c) => {
-  return c.text('Custom 404 Message', 404);
-});
+const app = new Hono().basePath('/api').route('/', router).route('/', auth);
 
 export const api = app;
 
-export type Router = typeof router;
+export type Router = typeof app;

@@ -1,3 +1,4 @@
+import { makeClient } from '$lib/utils';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -9,17 +10,16 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-  login: async (event) => {
-    console.log('db sveltekit', event.platform?.env.DB);
-    const result = await event.fetch('/api/login', {
-      method: 'POST',
-      body: await event.request.formData()
-    });
+  login: async ({ request, fetch }) => {
+    const formData = await request.formData();
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
-    const data = await result.json<{ message: string }>();
-    console.log('result', data);
+    const result = await makeClient(fetch).api.login.$post({ form: { email, password } });
+    console.log('result', result);
 
-    if (!result.ok) {
+    if (result.status === 404) {
+      const data = await result.json();
       return fail(400, { message: data.message });
     }
 

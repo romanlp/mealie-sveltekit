@@ -24,8 +24,8 @@ const app = new Hono<{ Bindings: { DB: D1Database } }>()
   })
   .post('/login', zValidator('form', Login), async (c) => {
     const body = await c.req.parseBody();
-    const email = body['email'];
-    const password = body['password'];
+    const email = body.email;
+    const password = body.password;
 
     if (!validateEmail(email)) {
       return c.json({ message: 'Invalid email address' }, 404);

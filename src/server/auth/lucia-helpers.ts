@@ -81,7 +81,7 @@ const scryptPromise = promisify(scrypt);
 export async function hash(password: string) {
   const salt = randomBytes(16).toString('hex');
   const derivedKey = await scryptPromise(password, salt, 64);
-  return salt + ':' + (derivedKey as Buffer).toString('hex');
+  return `${salt}:${(derivedKey as Buffer).toString('hex')}`;
 }
 
 export async function verify(password: string, hash: string) {

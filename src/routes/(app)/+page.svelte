@@ -21,6 +21,11 @@
       <h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
       <div class="flex items-center space-x-2">
         <Button size="sm">Download</Button>
+        <Button variant="secondary" size="sm">Edit</Button>
+        <Button variant="destructive" size="sm">Delete</Button>
+        <Button variant="outline" size="sm">Outline</Button>
+        <Button variant="ghost" size="sm">Ghost</Button>
+        <Button variant="link" size="sm">Link</Button>
       </div>
     </div>
     <Tabs.Root value="overview" class="space-y-4">

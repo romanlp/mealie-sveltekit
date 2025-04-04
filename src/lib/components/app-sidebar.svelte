@@ -5,10 +5,11 @@
   import ChartPie from 'lucide-svelte/icons/chart-pie';
   import Frame from 'lucide-svelte/icons/frame';
   import Languages from 'lucide-svelte/icons/languages';
-  import Map from 'lucide-svelte/icons/map';
+  import MapIcon from 'lucide-svelte/icons/map';
   import Send from 'lucide-svelte/icons/send';
   import Settings2 from 'lucide-svelte/icons/settings-2';
   import SquareTerminal from 'lucide-svelte/icons/square-terminal';
+  import ListTodo from 'lucide-svelte/icons/list-todo';
   import NavMain from '$lib/components/nav-main.svelte';
   import NavProjects from '$lib/components/nav-projects.svelte';
   import NavSecondary from '$lib/components/nav-secondary.svelte';
@@ -21,6 +22,12 @@
   const data = {
     user: user,
     navMain: [
+      {
+        title: 'Tasks',
+        url: '/tasks',
+        icon: ListTodo,
+        isActive: $page.url.pathname.startsWith('/tasks')
+      },
       {
         title: 'Playground',
         url: '#',
@@ -133,7 +140,7 @@
       {
         name: 'Travel',
         url: '#',
-        icon: Map
+        icon: MapIcon
       }
     ]
   };

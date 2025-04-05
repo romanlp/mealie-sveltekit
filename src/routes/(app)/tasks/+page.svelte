@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import type { Task } from '@server/db/schema/schema';
-  import TaskCreateDialog from '$lib/components/task-create-dialog.svelte';
+  import TaskCreateDialog from './TaskForm/task-create-dialog.svelte';
 
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   const tasks: Task[] = data.tasks;
 </script>
 
 <div class="container mx-auto px-4 py-8">
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-3xl font-bold">Tasks</h1>
-    <TaskCreateDialog />
+    <TaskCreateDialog {data} />
   </div>
 
   <div class="overflow-x-auto">

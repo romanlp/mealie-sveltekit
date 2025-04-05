@@ -8,7 +8,7 @@
 
 <Sidebar.Provider>
   <AppSidebar user={page.data.user} />
-  <main>
+  <main class="flex-1">
     <Sidebar.Trigger />
     {@render children?.()}
   </main>

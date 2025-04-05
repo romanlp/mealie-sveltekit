@@ -6,7 +6,7 @@ export const formSchema = z.object({
   description: z.string().optional(),
   status: z.enum(table.taskStatusValues).default(table.taskStatusEnum.TODO),
   priority: z.enum(table.priorityValues).default(table.priorityEnum.MEDIUM),
-  dueDate: z.date().optional(),
+  dueDate: z.string().optional(),
   estimatedHours: z.number().optional()
 });
 

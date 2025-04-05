@@ -3,45 +3,39 @@
   import * as Form from '$lib/components/ui/form/index.js';
   import * as table from '@server/db/schema/schema';
   import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms/client';
-  import { goto } from '$app/navigation';
   import type { FormSchema } from './form.schema';
-  import { enhance } from '$app/forms';
   import Input from '$lib/components/ui/input/input.svelte';
   import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
-  import SelectContent from '$lib/components/ui/select/select-content.svelte';
-  import SelectItem from '$lib/components/ui/select/select-item.svelte';
-  import SelectTrigger from '$lib/components/ui/select/select-trigger.svelte';
   import Button from '$lib/components/ui/button/button.svelte';
+  import * as Popover from '$lib/components/ui/popover';
+  import Calendar from '$lib/components/ui/calendar/calendar.svelte';
+  import { cn } from '$lib/utils';
+  import CalendarIcon from 'lucide-svelte/icons/calendar';
+  import type { ButtonProps } from '$lib/components/ui/button/button.svelte';
+  import {
+    CalendarDate,
+    DateFormatter,
+    type DateValue,
+    getLocalTimeZone,
+    parseDate,
+    today
+  } from '@internationalized/date';
 
   let { data }: { data: { form: SuperValidated<Infer<FormSchema>> } } = $props();
   let open = $state(false);
   const form = superForm(data.form);
+  const { form: formData, enhance } = form;
 
-  async function handleSubmit(event: SubmitEvent) {
-    const formData = new FormData(event.target as HTMLFormElement);
-    const response = await fetch('/api/task', {
-      method: 'POST',
-      body: JSON.stringify({
-        title: formData.get('title'),
-        description: formData.get('description'),
-        status: formData.get('status'),
-        priority: formData.get('priority'),
-        dueDate: formData.get('dueDate') ? new Date(formData.get('dueDate') as string) : null,
-        estimatedHours: formData.get('estimatedHours')
-          ? Number(formData.get('estimatedHours'))
-          : null
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+  const df = new DateFormatter('en-GB', {
+    dateStyle: 'long'
+  });
+  let value = $state<DateValue | undefined>();
+  $effect(() => {
+    value = $formData.dueDate ? parseDate($formData.dueDate) : undefined;
+  });
 
-    if (response.ok) {
-      open = false;
-      goto('/tasks', { invalidateAll: true });
-    }
-  }
+  let placeholder = $state<DateValue | undefined>();
 </script>
 
 <Dialog.Root bind:open>
@@ -56,8 +50,10 @@
     <form method="POST" use:enhance class="space-y-4">
       <Form.Field {form} name="title">
         <Form.Control>
-          <Form.Label>Title</Form.Label>
-          <Input type="text" name="title" required placeholder="Enter task title" />
+          {#snippet children({ props })}
+            <Form.Label>Title</Form.Label>
+            <Input type="text" name={props.name} required placeholder="Enter task title" />
+          {/snippet}
         </Form.Control>
         <Form.FieldErrors />
       </Form.Field>
@@ -71,36 +67,75 @@
 
       <Form.Field {form} name="status">
         <Form.Control>
-          <Form.Label>Status</Form.Label>
-          <Select.Root type="single" name="status">
-            <Select.Trigger>Select status</Select.Trigger>
-            <SelectContent>
-              {#each table.taskStatusValues as status}
-                <SelectItem value={status}>{status}</SelectItem>
-              {/each}
-            </SelectContent>
-          </Select.Root>
+          {#snippet children({ props })}
+            <Form.Label>Status</Form.Label>
+            <Select.Root type="single" name={props.name} bind:value={$formData.status}>
+              <Select.Trigger {...props}>{$formData.status ?? 'Select status'}</Select.Trigger>
+              <Select.Content>
+                {#each table.taskStatusValues as status}
+                  <Select.Item value={status}>{status}</Select.Item>
+                {/each}
+              </Select.Content>
+            </Select.Root>
+          {/snippet}
         </Form.Control>
       </Form.Field>
 
       <Form.Field {form} name="priority">
         <Form.Control>
-          <Form.Label>Priority</Form.Label>
-          <Select.Root type="single" name="priority">
-            <Select.Trigger>Select priority</Select.Trigger>
-            <Select.Content>
-              {#each table.priorityValues as priority}
-                <Select.Item value={priority}>{priority}</Select.Item>
-              {/each}
-            </Select.Content>
-          </Select.Root>
+          {#snippet children({ props })}
+            <Form.Label>Priority</Form.Label>
+            <Select.Root type="single" name={props.name} bind:value={$formData.priority}>
+              <Select.Trigger {...props}>{$formData.priority ?? 'Select priority'}</Select.Trigger>
+              <Select.Content>
+                {#each table.priorityValues as priority}
+                  <Select.Item value={priority}>{priority}</Select.Item>
+                {/each}
+              </Select.Content>
+            </Select.Root>
+          {/snippet}
         </Form.Control>
       </Form.Field>
 
       <Form.Field {form} name="dueDate">
         <Form.Control>
-          <Form.Label>Due Date</Form.Label>
-          <Input type="date" name="dueDate" />
+          {#snippet children({ props })}
+            <Form.Label>Due Date</Form.Label>
+            <Popover.Root>
+              <Popover.Trigger {...props}>
+                {#snippet child({ props }: { props: ButtonProps })}
+                  <Button
+                    variant="outline"
+                    class={cn(
+                      'w-[280px] justify-start pl-4 text-left font-normal',
+                      !value && 'text-muted-foreground'
+                    )}
+                    {...props}
+                  >
+                    {value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+                    <CalendarIcon class="ml-auto size-4 opacity-50" />
+                  </Button>
+                {/snippet}
+              </Popover.Trigger>
+              <Popover.Content class="w-auto p-0" side="top">
+                <Calendar
+                  type="single"
+                  {value}
+                  bind:placeholder
+                  minValue={new CalendarDate(1900, 1, 1)}
+                  maxValue={today(getLocalTimeZone())}
+                  calendarLabel="Due date"
+                  onValueChange={(v) => {
+                    if (v) {
+                      $formData.dueDate = v.toString();
+                    } else {
+                      $formData.dueDate = '';
+                    }
+                  }}
+                />
+              </Popover.Content>
+            </Popover.Root>
+          {/snippet}
         </Form.Control>
       </Form.Field>
 

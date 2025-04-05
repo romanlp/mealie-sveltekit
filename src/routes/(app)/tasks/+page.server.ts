@@ -15,16 +15,15 @@ export const actions: Actions = {
   default: async ({ request, fetch }) => {
     const form = await superValidate(request, zod(formSchema));
 
+    console.log('form.data', form);
+
     if (!form.valid) {
+      console.log('form is not valid');
       return { form };
     }
 
-    const response = await fetch('/api/task', {
-      method: 'POST',
-      body: JSON.stringify(form.data),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const response = await makeClient(fetch).api.tasks.$post({
+      json: form.data
     });
 
     if (!response.ok) {

@@ -1,5 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const user = sqliteTable('user', {
   id: text('id').primaryKey(),
@@ -98,6 +100,13 @@ export const task = sqliteTable(
     index('task_title_idx').on(table.title)
   ]
 );
+
+export const taskSelectSchema = createSelectSchema(task, {
+  createdAt: z.date().nullable(),
+  updatedAt: z.date().nullable()
+});
+export const taskInsertSchema = createInsertSchema(task);
+export const taskUpdateSchema = createInsertSchema(task);
 
 export type Session = typeof session.$inferSelect;
 

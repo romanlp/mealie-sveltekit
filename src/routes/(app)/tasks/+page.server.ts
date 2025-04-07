@@ -1,4 +1,5 @@
 import { makeClient } from '$lib/utils';
+import { taskSelectSchema } from '@server/db/schema/schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { Actions, PageServerLoad } from './$types';
@@ -8,7 +9,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
   const result = await makeClient(fetch).api.tasks.$get();
   const form = await superValidate(zod(formSchema));
 
-  return { tasks: await result.json(), form };
+  const tasksData = await result.json();
+  const tasks = tasksData.map((task) => taskSelectSchema.parse(task));
+
+  return { tasks, form };
 };
 
 export const actions: Actions = {

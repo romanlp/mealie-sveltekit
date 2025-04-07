@@ -16,12 +16,19 @@
   import NavUser from '$lib/components/nav-user.svelte';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import Command from 'lucide-svelte/icons/command';
+  import HomeIcon from 'lucide-svelte/icons/home';
 
   let { ref = $bindable(null), user, ...restProps } = $props();
 
   const data = {
     user: user,
     navMain: [
+      {
+        title: 'Home',
+        url: '/',
+        icon: HomeIcon,
+        isActive: $page.url.pathname === '/'
+      },
       {
         title: 'Tasks',
         url: '/tasks',

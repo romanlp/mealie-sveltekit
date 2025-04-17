@@ -10,6 +10,7 @@
   import Settings2 from 'lucide-svelte/icons/settings-2';
   import SquareTerminal from 'lucide-svelte/icons/square-terminal';
   import ListTodo from 'lucide-svelte/icons/list-todo';
+  import Clock from 'lucide-svelte/icons/clock';
   import NavMain from '$lib/components/nav-main.svelte';
   import NavProjects from '$lib/components/nav-projects.svelte';
   import NavSecondary from '$lib/components/nav-secondary.svelte';
@@ -17,6 +18,7 @@
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import Command from 'lucide-svelte/icons/command';
   import HomeIcon from 'lucide-svelte/icons/home';
+  import TimeTracker from '$lib/components/mini-time-tracker.svelte';
 
   let { ref = $bindable(null), user, ...restProps } = $props();
 
@@ -34,6 +36,12 @@
         url: '/tasks',
         icon: ListTodo,
         isActive: $page.url.pathname.startsWith('/tasks')
+      },
+      {
+        title: 'Time Tracker',
+        url: 'time',
+        icon: Clock,
+        isActive: false
       },
       {
         title: 'Playground',
@@ -179,6 +187,9 @@
     <NavMain items={data.navMain} />
     <NavProjects projects={data.projects} />
     <NavSecondary items={data.navSecondary} class="mt-auto" />
+    <div class="p-4">
+      <TimeTracker />
+    </div>
   </Sidebar.Content>
   <Sidebar.Footer>
     <NavUser {user} />

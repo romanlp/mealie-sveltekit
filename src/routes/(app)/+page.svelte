@@ -8,6 +8,9 @@
   import { CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
   import Card from '$lib/components/ui/card/card.svelte';
   import { Tabs } from 'bits-ui';
+  import TimeTracker from '$lib/components/time-tracker.svelte';
+
+  let { data } = $props();
 </script>
 
 <div class="hidden flex-col md:flex">
@@ -32,16 +35,7 @@
       </Tabs.List>
       <Tabs.Content value="overview" class="space-y-4">
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle class="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign class="text-muted-foreground h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <div class="text-2xl font-bold">$45,231.89</div>
-              <p class="text-muted-foreground text-xs">+20.1% from last month</p>
-            </CardContent>
-          </Card>
+          <TimeTracker />
           <Card>
             <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle class="text-sm font-medium">Subscriptions</CardTitle>
